@@ -1,15 +1,18 @@
 package pl.polsl.lotawiec.robert.controller;
 
+import java.util.Arrays;
+import java.util.List;
 import pl.polsl.lotawiec.robert.view.Base64View;
 import pl.polsl.lotawiec.robert.model.IllegalCharacterException;
 import pl.polsl.lotawiec.robert.model.Base64Model;
+import pl.polsl.lotawiec.robert.annotations.ProgramDocumentation;
 
  
 /**
  * Base64 Controller.
  *
  * @author Robert Lotawiec
- * @version 1.0
+ * @version 1.1
  */
 public class Controller 
 {
@@ -35,26 +38,22 @@ public class Controller
     * @param args arguments from console
     * @throws pl.polsl.lotawiec.robert.model.IllegalCharacterException
     */
-public void commandLineArgs(String[] args) throws IllegalCharacterException{
-        if(args.length==0)
+public void commandLineArgs(List<String> args) throws IllegalCharacterException{
+        if(args.size()!=2)
         {
-            throw new IllegalCharacterException("No command line arguments has been passed");
+            throw new IllegalCharacterException("Wrong number of parameters, it should be 2 parameters");
         }
-        else if(args.length == 2)
-        {       //check if there are any passed parameters
+        else
+        {       //There are two passed parameters and there are loaded below for its validation
                 //load keyword
-                keyword = args[0];
+                keyword = args.get(0);
                 if(!keyword.equals("e") && !keyword.equals("d"))
                 {
                     throw new IllegalCharacterException("Wrong keyword parameter");
                 }
-                //load all other parameters as a message
-                inputText=args[1];
+                //load second parameter as a message
+                inputText=args.get(1);
                 
-        }
-        else
-        { 
-            throw new IllegalCharacterException("Wrong number of parameters");
         }
     }
 
@@ -147,13 +146,23 @@ private void getInfoFromInput(){
 * @param args table of strings with two arguments: 
 * keyword for encryption/decryption mode (d or e) and string to encode/decode
 */
-public static void main(String[] args)
- {
-    Controller controller =  new Controller();
 
+/**
+* Annotating a full annotation about program information
+*/
+@ProgramDocumentation(
+        abbreviation="Base64", 
+        fullName="Encoding and Decoding Program in Base64 cipher", 
+        publishedYear=2021) 
+public static void main(String ... args)
+ {
+    //In the argument of the main method the String[] args array must remain, 
+    //because of the the characteristics of providing arguments to the command line
+    Controller controller =  new Controller();
+    List<String> arguments = Arrays.asList(args);
     try
     {
-        controller.commandLineArgs(args);
+        controller.commandLineArgs(arguments);
         controller.validateInfoFromCommandLine();
     }
     catch(IllegalCharacterException error)

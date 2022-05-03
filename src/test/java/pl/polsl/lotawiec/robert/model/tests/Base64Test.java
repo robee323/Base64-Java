@@ -1,20 +1,14 @@
 package pl.polsl.lotawiec.robert.model.tests;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
-/*import pl.polsl.bartosz.groffik.model.CipherData;
-import pl.polsl.bartosz.groffik.model.IncorrectParameterFormatException;
-*/
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import pl.polsl.lotawiec.robert.model.Base64Model;
+
+import pl.polsl.lotawiec.robert.model.IllegalCharacterException;
 
 /**
  * Test class validating correct operation of methods used during program's operation. 
@@ -24,79 +18,112 @@ import java.util.List;
 public class Base64Test {
     
     /**
-     * Default constructor
-     */
+    * Default constructor
+    */
     Base64Test(){};
     
-    /** an instance of CiperData class */
-    Base64Test testInstance;
+    /**
+    * An instance of Base64Model class
+    */
+    Base64Model testInstance;
     
     /**
-     * Sets up environment so that tests can be executed .
-     */
+    * Sets up environment so that tests can be executed .
+    */
     @BeforeEach
     public void setUp() {
-        List<String> myList = Arrays.asList(new String[]{"random","message"});
-        testModel = new CipherData("keyword", myList);
+        testInstance = new Base64Model();
     }
     
     /**
-     * Test checking whether data encoding is correct.
-     */
+    * This test checks whether data encoding works correctly.
+    */
     @Test
     void testEncoding(){
-        testModel.matchKeywordLengthToText(testModel.getKeyword(),testModel.getInputText());
-        testModel.encodeData(testModel.getGeneratedKeyword(), testModel.getInputText());
-        assertEquals("belzcd powqwuv",testModel.getCipheredText(), "Message encoding is not correct!");
+        String beforeEncoding = "Samsung";
+        String afterEncoding = "U2Ftc3VuZw==";
+
+        String encodedString = testInstance.encode(beforeEncoding);
+        assertEquals(afterEncoding, encodedString);
     }
     
     /**
-     * Test checking whether data decoding works correctly.
-     */
+    * This test checks whether data decoding works correctly.
+    */
     @Test
     void testDecoding(){
-        testModel.matchKeywordLengthToText(testModel.getKeyword(),testModel.getInputText());
-        testModel.encodeData(testModel.getGeneratedKeyword(), testModel.getInputText());
-        testModel.decodeData(testModel.getGeneratedKeyword(), testModel.getCipheredText());
-        assertEquals(testModel.getDecipheredText(), testModel.getInputText());
+        String beforeDecoding = "Tm9raWE=";
+        String afterDecoding = "Nokia";
+
+        String decodedString = testInstance.decode(beforeDecoding);
+        assertEquals(afterDecoding, decodedString);
     }
     
     /**
-     * Tests if input data is given in a correct format
-     * @throws IncorrectParameterFormatException custom exception handling incorrect string variable format.
-     */
+    * This test checks a single string validation
+    */
     @Test
-    void testDataCorrectness() throws IncorrectParameterFormatException{
-        testModel.validateData();
+    void testStringValidationCorrectString(){
+     try {
+            testInstance.validateString("Samsung", "[A-Za-z0-9+/]*");
+        } 
+        catch (IllegalCharacterException e) {
+            fail(e.getMessage());
+        }   
+           
     }
     
     /**
-     * Test checking for a single string validation
-     */
+    * Exception test that validates a string with invalid characters for decoding
+    * exception should be thrown
+    * 
+    * character occurs during validation 
+    */
     @Test
-    void testStringValidation(){
-        assertTrue(testModel.validateString(testModel.getInputText()));
-    }
-    
-    /**
-     * Parametrized test checking if for given pairs of variables a keyword of correct size will be generated.
-     * @param keyword string used to encode/decode a message.
-     * @param inputText string containing message to operate on.
-     */
-    @ParameterizedTest
-    @CsvSource({"apple,bartosz", "orange,tested"})
-    void testSizeOfGeneratedKeyword(String keyword, String inputText){
-        List<String> testList = Arrays.asList(new String[]{});
-        testList = new ArrayList<>();
-        String[] testArray = inputText.split(" ");
-        for(String test:testArray){
-            testList.add(test);
+    void testStringValidationInvalidString(){
+        try {
+            testInstance.validateString("Tm9raWE= U2Ftc3VuZw==", "^([ A-Za-z0-9+_]{1,})+[ \\t\\n\\x0B\\f\\r]*");
+            fail("Should be exception.");
+        } 
+        catch (IllegalCharacterException e) {
+            assertTrue(e.getMessage() != null);
         }
-        CipherData testedModel = new CipherData(keyword, testList);
-        String testString = inputText;
-        testedModel.matchKeywordLengthToText(keyword, testString);
-        String outputKeyword = testedModel.getGeneratedKeyword();
-        assertEquals(outputKeyword.length(),testString.length(), "Size of generated keyowrd is not equal to its message!");
+    }
+    
+    /**
+    * Parametrized Test that encrypts and then decrypts strings which contain white spaces
+    * 
+    * @param input string used for testing
+    */
+    @ParameterizedTest
+    @ValueSource(strings = {"L o r e m    i p s u m   dolor sit amet consectetur         adipiscing       elit"})
+    void testStringValidationWithWhitespace(String input){
+      
+        String encodedOutput = testInstance.encode(input);
+        String decodedOutput = testInstance.decode(encodedOutput);
+        assertEquals(input,decodedOutput);
+    }
+    
+    /**
+    * Parametrized test that encrypts and then decrypts different strings
+    * 
+    * @param input string used for testing
+    * @param result string used for testing
+    */
+    @ParameterizedTest
+    @CsvSource(value = {"Samsung:true", "Java:true", "515-140-185:false", "123456789:true"}, delimiter = ':')
+    void testEncryptWithValidation(String input, String result){
+        
+        try {
+            testInstance.validateString(input, "[A-Za-z0-9+/]*");
+            
+        } catch (IllegalCharacterException e) {
+            if (!result.equals("false")) {
+                fail(e.getMessage());
+            }
+        }
+        String output = testInstance.decode(testInstance.encode(input));
+        assertEquals(input, output);
     }
     
 }

@@ -10,7 +10,7 @@ import java.util.Scanner;
  * Contains methods used for input and output.
  * 
  * @author Robert Lotawiec
- * @version 1.0
+ * @version 1.1
  */
 public class Base64View {
 

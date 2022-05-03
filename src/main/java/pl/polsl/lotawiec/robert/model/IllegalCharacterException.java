@@ -4,7 +4,7 @@ package pl.polsl.lotawiec.robert.model;
 /**
  * Exception thrown when character does not appear in ASCII table
  * @author Robert Lotawiec
- * @version 1.0
+ * @version 1.1
  */
 
 public class IllegalCharacterException extends Exception {

@@ -1,16 +1,24 @@
 package pl.polsl.lotawiec.robert.model;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /** 
  * Class for encoding a given string from ASCII into Base64,
  * for decoding a given string from Base64 into ASCII
  * and for validation of input strings for encoding and decoding.
  * 
  * @author Robert Lotawiec
- * @version 1.0
+ * @version 1.1
  */
 public class Base64Model {
     /** Constant with characters used for encoding/decoding Base64 */
-    private static final String BASE_64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+_";
+     private static final List<Character> BASE_64_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+_"
+                                                            .chars()
+                                                            .mapToObj(e->(char)e)
+                                                            .collect(Collectors.toList());
     
     /**
       * In base64 encoding, the character set is [A-Z, a-z, 0-9, and + /].
@@ -54,35 +62,39 @@ public class Base64Model {
      */
     public String encode(String s) {
 
-	// the result/encoded string, the padding string, and the pad count
-	String r = "", p = "";
-	int c = s.length() % 3;
+		// the result/encoded string, the padding string, and the pad count
+		String r = "";
+		String p = "";
+		int modulo = s.length() % 3;
 
-	// add a right zero pad to make this string a multiple of 3 characters
-	if (c > 0) {
-	    for (; c < 3; c++) {
-		p += "=";
-		s += "\0";
-	    }
-	}
+		// add a right zero pad to make this string a multiple of 3 characters
+		if (modulo > 0) {
+			//list of iterator values 0, 1 or just 0
+			List<Integer> iterableList = IntStream.range(0, 3 - modulo).boxed().collect(Collectors.toList());
+			for (Integer it: iterableList) {
+				p += "=";
+				s += "\0";
+			}
+		}
+		//list of values lower than string length with modulo equal to 0
+		List<Integer> iterableModuloThreeList = IntStream.range(0, s.length()).filter(item -> item % 3 == 0).boxed().collect(Collectors.toList());
+		// increment over the length of the string, three characters at a time
+		for (Integer c : iterableModuloThreeList) {
 
-	// increment over the length of the string, three characters at a time
-	for (c = 0; c < s.length(); c += 3) {
+			// these three 8-bit (ASCII) characters become one 24-bit number
+			int n = (s.charAt(c) << 16) + (s.charAt(c + 1) << 8)
+				+ (s.charAt(c + 2));
 
-	    // these three 8-bit (ASCII) characters become one 24-bit number
-	    int n = (s.charAt(c) << 16) + (s.charAt(c + 1) << 8)
-		    + (s.charAt(c + 2));
+			// this 24-bit number gets separated into four 6-bit numbers
+			int n1 = (n >> 18) & 63, n2 = (n >> 12) & 63, n3 = (n >> 6) & 63, n4 = n & 63;
 
-	    // this 24-bit number gets separated into four 6-bit numbers
-	    int n1 = (n >> 18) & 63, n2 = (n >> 12) & 63, n3 = (n >> 6) & 63, n4 = n & 63;
+			// those four 6-bit numbers are used as indices into the base64 character list
 
-	    // those four 6-bit numbers are used as indices into the base64 character list 
-            
-	    r += "" + BASE_64_CHARS.charAt(n1) + BASE_64_CHARS.charAt(n2)
-		    + BASE_64_CHARS.charAt(n3) + BASE_64_CHARS.charAt(n4);
-	}
+			r += "" + BASE_64_CHARS.get(n1) + BASE_64_CHARS.get(n2)
+				+ BASE_64_CHARS.get(n3) + BASE_64_CHARS.get(n4);
+		}
 
-	return r.substring(0, r.length() - p.length()) + p;
+		return r.substring(0, r.length() - p.length()) + p;
     }
     
     /**
@@ -93,36 +105,37 @@ public class Base64Model {
      */
     public String decode(String s) {
 
-	// remove/ignore any characters not in the base64 characters list or 
-        //the pad character -- particularly newlines
-        
-	s = s.replaceAll("[^" + BASE_64_CHARS + "=]", "");
+		// remove/ignore any characters not in the base64 characters list or
+			//the pad character -- particularly newlines
 
-	// replace any incoming padding with a zero pad (the 'A' character is zero)
-	String p = (s.charAt(s.length() - 1) == '=' ? 
-		(s.charAt(s.length() - 2) == '=' ? "AA" : "A") : "");
-	String r = "";
-	s = s.substring(0, s.length() - p.length()) + p;
+		s = s.replaceAll("[^" + BASE_64_CHARS.toString() + "=]", "");
 
-	// increment over the length of this encoded string, four characters at a time
-	for (int c = 0; c < s.length(); c += 4) {
+		// replace any incoming padding with a zero pad (the 'A' character is zero)
+		String p = (s.charAt(s.length() - 1) == '=' ?
+			(s.charAt(s.length() - 2) == '=' ? "AA" : "A") : "");
+		String r = "";
+		s = s.substring(0, s.length() - p.length()) + p;
+		//list of values lower than string length with modulo equal to 0
+		List<Integer> iterableModuloFourList = IntStream.range(0, s.length()).filter(item -> item % 4 == 0).boxed().collect(Collectors.toList());
+		// increment over the length of this encoded string, four characters at a time
+		for (Integer c : iterableModuloFourList) {
 
-	    // each of these four characters represents a 6-bit index in the
-	    // base64 characters list which, when concatenated, will give the
-	    // 24-bit number for the original 3 characters
-            
-	    int n = (BASE_64_CHARS.indexOf(s.charAt(c)) << 18) //18-23
-		    + (BASE_64_CHARS.indexOf(s.charAt(c + 1)) << 12) //12-17
-		    + (BASE_64_CHARS.indexOf(s.charAt(c + 2)) << 6) //6-11
-		    + BASE_64_CHARS.indexOf(s.charAt(c + 3)); //0-5
+			// each of these four characters represents a 6-bit index in the
+			// base64 characters list which, when concatenated, will give the
+			// 24-bit number for the original 3 characters
 
-	    // split the 24-bit number into the original three 8-bit (ASCII) characters
-           
-	    r += "" + (char) ((n >>> 16) & 0xFF) + (char) ((n >>> 8) & 0xFF)
-		    + (char) (n & 0xFF);
-	}
+			int n = (BASE_64_CHARS.indexOf(s.charAt(c)) << 18) //18-23
+				+ (BASE_64_CHARS.indexOf(s.charAt(c + 1)) << 12) //12-17
+				+ (BASE_64_CHARS.indexOf(s.charAt(c + 2)) << 6) //6-11
+				+ BASE_64_CHARS.indexOf(s.charAt(c + 3)); //0-5
 
-	// remove any zero pad that was added to make this a multiple of 24 bits
-	return r.substring(0, r.length() - p.length());
+			// split the 24-bit number into the original three 8-bit (ASCII) characters
+
+			r += "" + (char) ((n >>> 16) & 0xFF) + (char) ((n >>> 8) & 0xFF)
+				+ (char) (n & 0xFF);
+		}
+
+		// remove any zero pad that was added to make this a multiple of 24 bits
+		return r.substring(0, r.length() - p.length());
     }
 }
