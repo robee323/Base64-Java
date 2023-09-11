@@ -77,7 +77,6 @@ public class Base64Test {
     * Exception test that validates a string with invalid characters for decoding
     * exception should be thrown
     * 
-    * character occurs during validation 
     */
     @Test
     void testStringValidationInvalidString(){

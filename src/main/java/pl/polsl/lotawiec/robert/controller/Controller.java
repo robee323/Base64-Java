@@ -2,7 +2,8 @@ package pl.polsl.lotawiec.robert.controller;
 
 import java.util.Arrays;
 import java.util.List;
-import pl.polsl.lotawiec.robert.view.Base64View;
+import pl.polsl.lotawiec.robert.view.Base64ViewConsole;
+import pl.polsl.lotawiec.robert.view.Base64ViewGUI;
 import pl.polsl.lotawiec.robert.model.IllegalCharacterException;
 import pl.polsl.lotawiec.robert.model.Base64Model;
 import pl.polsl.lotawiec.robert.annotations.ProgramDocumentation;
@@ -12,7 +13,7 @@ import pl.polsl.lotawiec.robert.annotations.ProgramDocumentation;
  * Base64 Controller.
  *
  * @author Robert Lotawiec
- * @version 1.1
+ * @version 1.2
  */
 public class Controller 
 {
@@ -22,19 +23,22 @@ public class Controller
     private static final String PATTERN_ASCII = "^([ A-Za-z0-9+_]{1,})+[ \\t\\n\\x0B\\f\\r]*";
     
     /** Field for view of application. */
-    private Base64View view = new Base64View();
+    private Base64ViewConsole view = new Base64ViewConsole();
     /** Field for model of application. */
     private Base64Model model = new Base64Model();
     /** String used as a keyword in data encryption and decryption for console parameters*/
     private String keyword;
     /** Message to operate on, given by user through console parameters*/
-    private String inputText;   
+    private String inputText;
+    /** An instance of Base64ViewGUI class*/
+    Base64ViewGUI mainGUI = new Base64ViewGUI();
+    
     
     /**
     * This method validate if in the command line has been passed arguments. 
     * If there are any arguments in the command line, 
     * then the number of given arguments and keyword (d or e) is checked.
-    * 
+    * @deprecated (since = "1.2", forRemoval = true)
     * @param args arguments from console
     * @throws pl.polsl.lotawiec.robert.model.IllegalCharacterException
     */
@@ -62,7 +66,7 @@ public void commandLineArgs(List<String> args) throws IllegalCharacterException{
  * has been succesfully passed. Here the second argument (the input string)
  * is passed to validateString method whether it contains 
  * only valid characters for encoding/decoding.
- * 
+ * @deprecated (since = "1.2", forRemoval = true)
  * @throws IllegalCharacterException 
  */
 private void validateInfoFromCommandLine() throws IllegalCharacterException {
@@ -89,7 +93,7 @@ private void validateInfoFromCommandLine() throws IllegalCharacterException {
 * After receiving the input string, it is passed to validateString method 
 * whether it contains only valid characters for encoding/decoding.
 * This method works until it finally receives an input that meets the requirements.
-*
+* @deprecated (since = "1.2", forRemoval = true)
 */
 private void getInfoFromInput(){
     boolean isValidated = false;
@@ -156,6 +160,9 @@ private void getInfoFromInput(){
         publishedYear=2021) 
 public static void main(String ... args)
  {
+    // Initialization of Base64ViewGUI window
+    Base64ViewGUI.setView(null);
+    
     //In the argument of the main method the String[] args array must remain, 
     //because of the the characteristics of providing arguments to the command line
     Controller controller =  new Controller();

@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
  * and for validation of input strings for encoding and decoding.
  * 
  * @author Robert Lotawiec
- * @version 1.1
+ * @version 1.2
  */
 public class Base64Model {
     /** Constant with characters used for encoding/decoding Base64 */

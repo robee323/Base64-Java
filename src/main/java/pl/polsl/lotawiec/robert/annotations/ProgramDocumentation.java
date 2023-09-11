@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 /**
  * Contains basic data about the algorithm
  * @author Robert Lotawiec
- * @version 1.1
+ * @version 1.2
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

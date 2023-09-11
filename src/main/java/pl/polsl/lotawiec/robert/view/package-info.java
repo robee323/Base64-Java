@@ -1,4 +1,4 @@
 /**
- * View package contains class handling input and output.
+ * View package contains class handling input, output and GUI.
  */
 package pl.polsl.lotawiec.robert.view;

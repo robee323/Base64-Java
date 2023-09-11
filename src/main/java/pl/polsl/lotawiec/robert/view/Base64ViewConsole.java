@@ -10,20 +10,20 @@ import java.util.Scanner;
  * Contains methods used for input and output.
  * 
  * @author Robert Lotawiec
- * @version 1.1
+ * @version 1.2
  */
-public class Base64View {
+public class Base64ViewConsole {
 
     private boolean decryptMode = false;
 
     /**
     * Ask user if want to decrypt or encrypt
     * Defaults to encrypt.
-    * 
+    * @deprecated (since = "1.2", forRemoval = true)
     * @return true for decryption and false for encryption.
     */
     public boolean checkIfDecryptMode() {
-        Base64View view=new Base64View();
+        Base64ViewConsole view=new Base64ViewConsole();
         boolean validated=false;
         while(!validated)
         {
@@ -46,6 +46,8 @@ public class Base64View {
         return decryptMode;
         
     }
+    
+    
     /**
     * This method check if chosen by the user mode exists 
     * if such mode exists the program can proceed to the next step
@@ -66,7 +68,7 @@ public class Base64View {
     
     /**
     * Prints given message to console
-    * 
+    * @deprecated (since = "1.2", forRemoval = true)
     * @param message to print to the console
     */
     public void showMessage(String message){
@@ -75,7 +77,7 @@ public class Base64View {
     
     /**
     * Retrieves the text entered by the user
-    * 
+    * @deprecated (since = "1.2", forRemoval = true)
     * @return string entered by user
     */
     public String getText(){
@@ -86,7 +88,7 @@ public class Base64View {
     
     /**
      * Method user to print out a message with resulting decoded message.
-     * 
+     * @deprecated (since = "1.2", forRemoval = true)
      * @param message resulting decoded message.
      */
     public void printDecodedData(String message){
@@ -95,7 +97,7 @@ public class Base64View {
     
     /**
      * Method user to print out a message with resulting encoded message.
-     * 
+     * @deprecated (since = "1.2", forRemoval = true)
      * @param message resulting encoded message.
      */
     public void printEncodedData(String message){
@@ -104,6 +106,7 @@ public class Base64View {
     
     /**
     * Prints default message of exception.
+    * @deprecated (since = "1.2", forRemoval = true)
     * @param exception which value will be printed.
     */
     public void printErrorMessage(Exception exception) {
