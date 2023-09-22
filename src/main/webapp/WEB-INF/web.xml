@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+    <servlet>
+        <servlet-name>EncryptForm</servlet-name>
+        <servlet-class>pl.polsl.lotawiec.robert.servlets.EncryptFormServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DecryptForm</servlet-name>
+        <servlet-class>pl.polsl.lotawiec.robert.servlets.DecryptFormServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>History</servlet-name>
+        <servlet-class>pl.polsl.lotawiec.robert.servlets.HistoryServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HomePage</servlet-name>
+        <servlet-class>pl.polsl.lotawiec.robert.servlets.HomeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EncryptForm</servlet-name>
+        <url-pattern>/EncryptForm</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DecryptForm</servlet-name>
+        <url-pattern>/DecryptForm</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>History</servlet-name>
+        <url-pattern>/History</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HomePage</servlet-name>
+        <url-pattern>/HomePage</url-pattern>
+    </servlet-mapping>
+</web-app>

@@ -1,0 +1,108 @@
+            body {
+                font-family: Arial;
+            }
+
+            .tab {
+                overflow: hidden;
+                border: 1px solid #ccc;
+                background-color: #737373;
+            }
+
+            .tab button {
+                float: left;
+                cursor: pointer;
+                transition: 0.3s;
+                font-size: 17px;
+                padding: 3px 6px;
+                background-color: inherit;
+            }
+
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            .tab button.active {
+                background-color: #242424;
+            }
+
+            .tabcontent {
+                display: none;
+                padding: 2px 13px 12px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+            }
+            h2 {
+                text-align: center;
+            }
+            span {
+                width: 95px;
+                display: inline-block;
+            }
+
+            .container {
+                max-width: 400px;
+                margin: auto;
+                background: inherit;
+            }
+            body {
+                padding: 5px;
+                background: #131313;
+                color: #fff !important;
+            }
+            button,
+            input {
+                color: #fff;
+                background-color: #242424;
+                padding: 2px 6px;
+            }
+            input {
+                width: 100%;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            
+            .error {
+                font-weight: 700;
+                color: #f00;
+                font-size: 16px;
+            }
+            form{
+                padding-bottom: 6px;
+            }
+            
+            .result {
+                font-size: 12px;
+                overflow: auto;
+                white-space: pre;
+                font-family: consolas;
+            }
+            
+            th,td {
+                width: 33.33333%;
+                height: 35px;
+            }
+
+            table,tbody {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th {
+                text-transform: uppercase;
+                color: #ccc;
+            }
+
+            td{
+                padding: 10px;
+                border-bottom: 1px solid #ccc;
+            }
+            
+            .footer{
+                text-align: right;
+                padding: 6px 0;
+                color: #444;
+                font-size: 12px;
+                font-style: italic;
+                font-weight: 500;
+            }

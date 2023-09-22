@@ -1,4 +1,4 @@
-package pl.polsl.lotawiec.robert.model.tests;
+package pl.polsl.lotawiec.robert.tests;
 
 
 import static org.junit.jupiter.api.Assertions.*;

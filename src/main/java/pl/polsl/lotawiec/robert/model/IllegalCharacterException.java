@@ -5,6 +5,7 @@ package pl.polsl.lotawiec.robert.model;
  * Exception thrown when character does not appear in ASCII table
  * @author Robert Lotawiec
  * @version 1.2
+ * 
  */
 
 public class IllegalCharacterException extends Exception {
@@ -15,6 +16,7 @@ public class IllegalCharacterException extends Exception {
     *
     * @param message info about error
     * @param position info about position
+    * 
     */
     public IllegalCharacterException(String message, Integer position) {
         super(message);
@@ -24,6 +26,7 @@ public class IllegalCharacterException extends Exception {
     /** Constructor of object with error message
     *
     * @param message info about error
+    * 
     */
     public IllegalCharacterException(String message) {
         super(message);
@@ -32,6 +35,7 @@ public class IllegalCharacterException extends Exception {
     
     /** Getter of position where error has occured
     * @return position of error 
+    * 
     */
     public Integer getPosition()
     {

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head lang="pl-PL">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>BASE 64</title>
+        <link rel="stylesheet" type="text/css" href="resources/style/style.css">
+        <script src="resources/scripts/jquery-1.12.0.min.js"></script>
+        <script src="resources/scripts/js.cookie.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h2><a href="HomePage" style="color: #fff;" title="Home Page">BASE 64</a></h2>
+            
+            <div class="tab">
+                <button class="tablinks active" onclick="openTab(event, 'Encrypt')">Encrypt</button>
+                <button class="tablinks" onclick="openTab(event, 'Decrypt')">Decrypt</button>
+                <button class="tablinks load-ajax" data-form="HistoryForm" onclick="openTab(event, 'History')">History</button>
+                <button class="tablinks load-stats" onclick="openTab(event, 'Statistics')">Statistics</button>
+            </div>
+            
+            <div id="Encrypt" class="tabcontent" style="display: block;">
+                <form action="EncryptForm" method="POST" id="EncryptForm">
+                    <p><span>Message: </span><input type="text" size="40" name="encryptMessage" /></p>
+                    <input class="load-ajax" type="submit" data-form="EncryptForm" value="Encrypt" />
+                </form>
+                <br />
+                <div id="EncryptFormOutput"></div>
+
+            </div>
+            
+            <div id="Decrypt" class="tabcontent" style="display: none;">
+                <form action="DecryptForm" method="POST" id="DecryptForm">
+                    <p><span>Message: </span><input type="text" size="40" name="decryptMessage" /></p>
+                    <input class="load-ajax" type="submit" data-form="DecryptForm" value="Decrypt" />
+                </form>
+                <div id="DecryptFormOutput"></div>
+            </div>
+            
+            <div id="History" class="tabcontent" style="display: none;">
+                <form action="History" method="POST" id="HistoryForm"></form>
+                <div id="HistoryFormOutput"></div>
+                <button class="load-ajax" data-form="HistoryForm">Refresh</button>
+            </div>
+            
+            <div id="Statistics" class="tabcontent" style="display: none;">
+                <div id="StatisticsInner"></div>
+                <button class="load-stats">Refresh</button>
+            </div>
+        </div>
+        <script>
+            function openTab(evt, tabName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+            
+            
+            $('body').on('click', '.load-ajax', function(e){
+                e.preventDefault();
+                let $form = $("#"+$(this).attr('data-form'));
+                let $outputDiv = $("#"+$(this).attr('data-form')+"Output");
+                $.ajax({
+                    type: $form.attr('method'),
+                    url: $form.attr('action'),
+                    data: $form.serialize(),
+                    beforeSend: function() {
+                        
+                    },
+                    success: function(data) {
+                        $outputDiv.html("<div class=\"result\">"+data+"</div>");
+                    },
+                    error: function(xhr, status, error) {
+                        $outputDiv.html("<div class=\"error\"> Error!</br>"+error+"<div>");
+                    }
+                });
+            });
+            
+            $('body').on('click', '.load-stats', function(e){
+                e.preventDefault();
+                
+                let numberOfErrors = $.cookie('NumberOfErrors');
+                if(numberOfErrors == null){
+                    numberOfErrors = 0;
+                }
+                
+                let ENCRYPTION = $.cookie('ENCRYPTION');
+                if(ENCRYPTION == null){
+                    ENCRYPTION = 0;
+                }
+                
+                let DECRYPTION = $.cookie('DECRYPTION');
+                if(DECRYPTION == null){
+                    DECRYPTION = 0;
+                }
+                
+                               
+                $("#StatisticsInner").html('<table><tr><th>Operation</th><th>Times preformed</th></tr><tr><td>Errors:</td><td>'+numberOfErrors+'</td></tr>'+'<tr><td>Encryptions:</td><td>'+ENCRYPTION+'</td></tr>'+'<tr><td>Decryptions:</td><td>'+DECRYPTION+'</td></tr></table>');
+            });
+        </script>
+    </body>
+</html>

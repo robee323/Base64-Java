@@ -10,8 +10,9 @@ import java.util.stream.IntStream;
  * for decoding a given string from Base64 into ASCII
  * and for validation of input strings for encoding and decoding.
  * 
- * @author Robert Lotawiec
- * @version 1.2
+ @author Robert Lotawiec
+ @version 1.3
+ * 
  */
 public class Base64Model {
     /** Constant with characters used for encoding/decoding Base64 */
@@ -37,9 +38,10 @@ public class Base64Model {
       * and there can (but doesn't have to) be any whitespace character at the end.
       * ^([ A-Za-z0-9+_]{1,})+[ \\t\\n\\x0B\\f\\r]*
       * 
-      * @param str Input string
-      * @param pattern A regex that the input string has to match 
-      * @throws IllegalCharacterException
+      @param str Input string
+      @param pattern A regex that the input string has to match 
+      @throws IllegalCharacterException
+      * 
       */
     public void validateString(String str, String pattern) throws IllegalCharacterException{
       
@@ -59,6 +61,7 @@ public class Base64Model {
      * 
      * @param s input string
      * @return a string in Base64 encoding
+     * 
      */
     public String encode(String s) {
 
@@ -102,6 +105,7 @@ public class Base64Model {
      * 
      * @param s input string
      * @return a string in ACII encoding
+     * 
      */
     public String decode(String s) {
 
