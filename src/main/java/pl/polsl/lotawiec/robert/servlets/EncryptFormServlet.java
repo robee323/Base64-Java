@@ -4,18 +4,23 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pl.polsl.lotawiec.robert.enums.OperationsTypes;
 import pl.polsl.lotawiec.robert.model.Base64Model;
 import pl.polsl.lotawiec.robert.model.HistoryEntry;
 import pl.polsl.lotawiec.robert.model.IllegalCharacterException;
+import pl.polsl.lotawiec.robert.model.db.Log;
+import pl.polsl.lotawiec.robert.model.db.dao.DaoLog;
+import pl.polsl.lotawiec.robert.model.db.dao.DaoOperation;
 
 /**
  * Servlet used for encrypting the data
  *
  * @author Robert Lotawiec
- * @version 1.3
+ * @version 1.4
  * 
  */
 public class EncryptFormServlet extends HttpServlet {
@@ -28,6 +33,26 @@ public class EncryptFormServlet extends HttpServlet {
     private Base64Model base64Model = new Base64Model();
     /** A regex that the input string has to match to be dencoded from BASE64 to ASCII*/
     private static final String PATTERN_ASCII = "^([ A-Za-z0-9+_]{1,})+[ \\t\\n\\x0B\\f\\r]*";
+    
+    /**
+     * History Data Access Object
+     */
+    private DaoLog logsDao;
+    
+    
+    /**
+     * Operation Data Access Object
+     */
+    private DaoOperation operationDao;
+    
+    /**
+     * Finds instance of DAOs and RSA form servlet context
+     */
+    @Override
+    public void init() {
+        logsDao = (DaoLog) getServletContext().getAttribute("logsDao");
+        operationDao = (DaoOperation) getServletContext().getAttribute("operationDao");
+    }
     
     /**
      * Handles the GET request and sends response.
@@ -85,10 +110,11 @@ public class EncryptFormServlet extends HttpServlet {
         
         PrintWriter out = response.getWriter();
         
-        if(request.getCookies()!=(null))
-        {
+        
         Cookie errorCookie = new Cookie("NumberOfErrors", "0");
         Cookie operationCookie = new Cookie(operation.name(), "0");
+        if(request.getCookies()!=(null))
+        {
         for (Cookie c : request.getCookies()) {
             if ("NumberOfErrors".equals(c.getName())) {
                 errorCookie = c;
@@ -96,7 +122,8 @@ public class EncryptFormServlet extends HttpServlet {
             if(operation.name().equals(c.getName())) {
                 operationCookie = c;
             }
-        } 
+        }
+        }
         
         
         String encryptMessage = request.getParameter("encryptMessage");
@@ -128,13 +155,18 @@ public class EncryptFormServlet extends HttpServlet {
         operationCookie.setValue(String.valueOf(Integer.parseInt(operationCookie.getValue()) + 1));
         response.addCookie(operationCookie);
         
-        HttpSession currSession = request.getSession();
+        /*HttpSession currSession = request.getSession();
         List<HistoryEntry> history = (List<HistoryEntry>) currSession.getAttribute("opeations-history");
         if (history == null) {
             history = new ArrayList<>();
         }
         history.add(new HistoryEntry(operation, result));
-        currSession.setAttribute("opeations-history", history);
-    }
+        currSession.setAttribute("opeations-history", history);*/
+        Log log = new Log();
+        log.setOperationType(operationDao.findOperationById((long) operation.getOperationIndex()));
+        log.setExecutionTime(new Timestamp(System.currentTimeMillis()));
+        
+        logsDao.saveLog(log);
+    
     }
 }

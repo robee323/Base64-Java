@@ -40,7 +40,7 @@ public class Base64Model {
       * 
       @param str Input string
       @param pattern A regex that the input string has to match 
-      @throws IllegalCharacterException
+      @throws IllegalCharacterException an error occurs when the str string does not match the pattern string
       * 
       */
     public void validateString(String str, String pattern) throws IllegalCharacterException{

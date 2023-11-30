@@ -4,12 +4,17 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pl.polsl.lotawiec.robert.enums.OperationsTypes;
 import pl.polsl.lotawiec.robert.model.Base64Model;
 import pl.polsl.lotawiec.robert.model.HistoryEntry;
 import pl.polsl.lotawiec.robert.model.IllegalCharacterException;
+import pl.polsl.lotawiec.robert.model.db.dao.DaoLog;
+import pl.polsl.lotawiec.robert.model.db.dao.DaoOperation;
+import pl.polsl.lotawiec.robert.model.db.Log;
+import pl.polsl.lotawiec.robert.model.db.Operation;
 
 /**
  * Servlet used for decrypting the data
@@ -30,6 +35,26 @@ public class DecryptFormServlet extends HttpServlet {
     private static final String PATTERN_BASE64 = "^([A-Za-z0-9+_]{4})*([A-Za-z0-9+_]{3}=|[A-Za-z0-9+_]{2}==)?$";
 
     /**
+     * History Data Access Object
+     */
+    private DaoLog logsDao;
+    
+    
+    /**
+     * Operation Data Access Object
+     */
+    private DaoOperation operationDao;
+    
+    /**
+     * Finds instance of DAOs and RSA form servlet context
+     */
+    @Override
+    public void init() {
+        logsDao = (DaoLog) getServletContext().getAttribute("logsDao");
+        operationDao = (DaoOperation) getServletContext().getAttribute("operationDao");
+    }
+    
+    /**
      * Handles the GET request and sends response.
      *
      * @param request user request
@@ -41,6 +66,8 @@ public class DecryptFormServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+            /*Cookie cookie = new Cookie("","");
+            response.addCookie(cookie);*/
             doRequest(request, response);
         } catch (IllegalCharacterException ex) {
             Logger.getLogger(DecryptFormServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -79,14 +106,14 @@ public class DecryptFormServlet extends HttpServlet {
     public void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, IllegalCharacterException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("UTF-8");
-        
+    
         OperationsTypes operation = OperationsTypes.DECRYPTION;
         PrintWriter out = response.getWriter();
         //if cookie getcookies is different than null
-        if(request.getCookies()!=(null))
-        {
         Cookie errorCookie = new Cookie("NumberOfErrors", "0");
         Cookie operationCookie = new Cookie(operation.name(), "0");
+        if(request.getCookies()!=(null))
+        {
         for (Cookie c : request.getCookies()) {
             if ("NumberOfErrors".equals(c.getName())) {
                 errorCookie = c;
@@ -95,7 +122,7 @@ public class DecryptFormServlet extends HttpServlet {
                 operationCookie = c;
             }
         }
-        
+        }
         
         String decryptMessage = request.getParameter("decryptMessage");
         //add null
@@ -122,14 +149,19 @@ public class DecryptFormServlet extends HttpServlet {
         out.println("<p><span>Decrypted: </span>"+result+"</p>");
         operationCookie.setValue(String.valueOf(Integer.parseInt(operationCookie.getValue()) + 1));
         response.addCookie(operationCookie);
-        
+        /*
         HttpSession currSession = request.getSession();
         List<HistoryEntry> history = (List<HistoryEntry>) currSession.getAttribute("opeations-history");
         if (history == null) {
             history = new ArrayList<>();
         }
         history.add(new HistoryEntry(operation, result));
-        currSession.setAttribute("opeations-history", history);
-    }
+        currSession.setAttribute("opeations-history", history);*/
+        Log log = new Log();
+        log.setOperationType(operationDao.findOperationById((long) operation.getOperationIndex()));
+        log.setExecutionTime(new Timestamp(System.currentTimeMillis()));
+
+        logsDao.saveLog(log);
+    
     }
 }

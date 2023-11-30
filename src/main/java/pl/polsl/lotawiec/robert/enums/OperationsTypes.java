@@ -10,29 +10,32 @@ public enum OperationsTypes {
     /**
      * Text encryption
      */
-    ENCRYPTION("Text encryption"),
+    ENCRYPTION("Text encryption", 1),
     
     /**
      * Text decryption
      */
-    DECRYPTION("Text decryption"),
-    
-    /**
-     * Generating a pair of keys
-     */
-    NEW_KEYS("Generating a pair of keys");
+    DECRYPTION("Text decryption", 2);
     
     /**
      * Text description of given operation
      */
     private String operationDescription;
     
+    
+    /**
+     * Numeric index of given operation
+     */
+    private int operationIndex;
+    
     /**
      * Constructor for enumerated type
      * @param operationDescription Text description of given operation
+     * @param operationIndex Index of given operation
      */
-    private OperationsTypes(String operationDescription){
+    private OperationsTypes(String operationDescription, int operationIndex) {
         this.operationDescription = operationDescription;
+        this.operationIndex = operationIndex;
     }
     
     /**
@@ -50,4 +53,22 @@ public enum OperationsTypes {
     public void setOperationDescription(String operationDescription) {
         this.operationDescription = operationDescription;
     }
+    
+    /**
+     * Getter for index of operation
+     * @return Index of given operation
+     */
+    public int getOperationIndex() {
+        return operationIndex;
+    }
+    
+    
+    /**
+     * Setter for index of operation
+     * @param operationIndex Index of given operation
+     */
+    public void setOperationIndex(int operationIndex) {
+        this.operationIndex = operationIndex;
+    }
+    
 }
